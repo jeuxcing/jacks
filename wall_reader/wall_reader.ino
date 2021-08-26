@@ -13,6 +13,9 @@ PJONSoftwareBitBang bus;
 void setup() {
   Serial.begin(115200);
   
+  bus.set_communication_mode(PJON_SIMPLEX);
+  bus.set_id(ROW_ID);
+  
   for (int i=0 ; i<NB_ROWS ; i++) {
     pinMode(plug_pins[i], INPUT_PULLUP);
   }
@@ -33,15 +36,9 @@ void loop() {
       if (plugged[i]) {
         uint8_t myid = ROW_ID * NB_ROWS + i;
         bus.strategy.set_pin(network_pins[i]);
-        bus.set_id(ROW_ID * NB_ROWS + i);
-        bus.begin();
-        uint16_t result = bus.send_packet_blocking(100, &myid, 1);
-        Serial.println(result);
-
-        /*digitalWrite(LED_BUILTIN, HIGH);
-        delay(50);
-        digitalWrite(LED_BUILTIN, LOW);
-        delay(50);/**/
+        // bus.set_id(ROW_ID * NB_ROWS + i);
+        
+        uint16_t result = bus.send_packet(100, &myid, 1);
       }
     }
     
