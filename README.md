@@ -6,7 +6,7 @@
 * Vertical Linear Potentiometers 'V'
 * Horizontal Linear Potentiometers 'H'
 * Buttons: 'B'
-* Start: 'S'
+* Control (Start/pause/...): 'C'
 
 
 # 1-Wire Mixer commands
