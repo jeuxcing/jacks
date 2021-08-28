@@ -27,9 +27,9 @@
 * Wall coordinate \[1 Byte\]
 
 
-## Send controler value \[3 Bytes\]
+## Send controler value \[4 Bytes\]
 
 * Serder type (see 1-Wire address for types) \[1 Byte\]
-* Mixer coordinate \[1 Byte\]
 * Value command 'V' \[1 Byte\]
-
+* Mixer coordinate \[1 Byte\]
+* Value \[1 Byte\]

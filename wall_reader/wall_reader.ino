@@ -2,7 +2,7 @@
 
 
 #define ROW_ID 0
-#define NB_ROWS 3
+#define NB_ROWS 5
 
 int plug_pins[] = {3, 5, 7, 9, 11};
 bool plugged[] = {false, false, false, false, false};
@@ -39,6 +39,8 @@ void loop() {
         // bus.set_id(ROW_ID * NB_ROWS + i);
         
         uint16_t result = bus.send_packet(100, &myid, 1);
+        //if (result != 65535)
+          //Serial.println(result);
       }
     }
     
