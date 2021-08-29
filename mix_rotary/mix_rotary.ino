@@ -14,9 +14,13 @@ bool plugged[] = {false, false, false, false, false};
 unsigned int network_pins[] = {4, 6, 8, 10, 12};
 uint8_t pairs[] = {255, 255, 255, 255, 255};
 unsigned long last_contact[] = {0, 0, 0, 0, 0};
+unsigned int measure_pins[] = {A0, A1, A2, A3, A4};
+unsigned int measure_pinsB[] = {A5, A6, A7, 13};
 
-unsigned int measure_pins[] = {A0, A1, A2, A3, A4, A5};
 uint16_t values[] = {0, 0, 0, 0, 0};
+
+int laststate[5];
+int state[5];
 
 int current_pin = 100;
 
@@ -44,7 +48,7 @@ void jack_receiver(uint8_t *payload, uint16_t length, const PJON_Packet_Info &in
   pairs[current_pin] = *payload;
   last_contact[current_pin] = millis();
 }
-
+  
 void setup() {
   Serial.begin(115200);
 
@@ -63,6 +67,12 @@ void setup() {
   main_bus.strategy.set_pin(NET_PIN);
   main_bus.set_id(TYPE);
   main_bus.begin();
+
+  laststate[0] = digitalRead(A0);
+  laststate[1] = digitalRead(A1);
+  laststate[2] = digitalRead(A2);
+  laststate[3] = digitalRead(A3);
+  laststate[4] = digitalRead(A4);
 }
 
 
@@ -91,15 +101,29 @@ void loop() {
         uint8_t value;
         switch (TYPE) {
           case 'V':
+          case 'H':
           case 'P':
             value = analogRead(measure_pins[i]) / 4;
             break;
           case 'B':
             value = digitalRead(measure_pins[i]) == LOW ? 0 : 255;
             break;
+          case 'R':
+            value = 0;
+            state[i] = digitalRead(measure_pins[i]);
+            if (state[i] != laststate[i]){
+              if (digitalRead(measure_pinsB[i]!=state[i])){
+                value = 64;
+              }
+              else {
+                value = 32;
+              }
+            }
+            
+            break;
         }
 
-        if ( abs(((int16_t)value) - ((int16_t)values[i])) > 3) {
+        if (((TYPE == 'R') and (value != 0)) or ( abs(((int16_t)value) - ((int16_t)values[i])) > 3)) {
           values[i] = value;
 
           unsigned int packet[4];

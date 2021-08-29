@@ -31,5 +31,6 @@
 
 * Serder type (see 1-Wire address for types) \[1 Byte\]
 * Value command 'V' \[1 Byte\]
+if rotary type, 32 for "-1", 64 for "+1"
 * Mixer coordinate \[1 Byte\]
 * Value \[1 Byte\]
