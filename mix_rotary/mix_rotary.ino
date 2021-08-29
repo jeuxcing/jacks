@@ -1,7 +1,7 @@
 #include <PJONSoftwareBitBang.h>
 
-//#define TYPE 'R' /* Rotary /**/
-#define TYPE 'P' /* Potard /**/
+#define TYPE 'R' /* Rotary /**/
+//#define TYPE 'P' /* Potard /**/
 //#define TYPE 'L' /* Linear /**/
 //#define TYPE 'B' /* Button /**/
 
@@ -15,7 +15,7 @@ unsigned int network_pins[] = {4, 6, 8, 10, 12};
 uint8_t pairs[] = {255, 255, 255, 255, 255};
 unsigned long last_contact[] = {0, 0, 0, 0, 0};
 unsigned int measure_pins[] = {A0, A1, A2, A3, A4};
-unsigned int measure_pinsB[] = {A5, A6, A7, 13};
+unsigned int measure_pinsB[] = {A3, A4, A5}; //For the rotary, baby
 
 uint16_t values[] = {0, 0, 0, 0, 0};
 
@@ -54,7 +54,13 @@ void setup() {
 
   // Set jack plug readers
   for (int i=0 ; i<NB_JACKS ; i++) {
-    pinMode(plug_pins[i], INPUT_PULLUP);
+    pinMode(plug_pins[i], INPUT_PULLUP);  
+  }
+  
+  for (int i=0 ; i<3 ; i++){
+    pinMode(measure_pins[i],INPUT_PULLUP);
+    if (TYPE == 'R')
+      pinMode(measure_pinsB[i],INPUT_PULLUP);
   }
 
   // Set Jack BitBang bus
@@ -106,24 +112,25 @@ void loop() {
             value = analogRead(measure_pins[i]) / 4;
             break;
           case 'B':
-            value = digitalRead(measure_pins[i]) == LOW ? 0 : 255;
+            value = digitalRead(measure_pins[i]) == LOW ? 255 : 0;
             break;
           case 'R':
             value = 0;
             state[i] = digitalRead(measure_pins[i]);
             if (state[i] != laststate[i]){
-              if (digitalRead(measure_pinsB[i]!=state[i])){
+              if (digitalRead(measure_pinsB[i])!=state[i]){
                 value = 64;
               }
               else {
                 value = 32;
               }
             }
+            laststate[i]=state[i];
             
             break;
         }
 
-        if (((TYPE == 'R') and (value != 0)) or ( abs(((int16_t)value) - ((int16_t)values[i])) > 3)) {
+        if (((TYPE == 'R') and (value != 0)) or ((TYPE != 'R') and ( abs(((int16_t)value) - ((int16_t)values[i])) > 3))) {
           values[i] = value;
 
           unsigned int packet[4];
