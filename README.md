@@ -34,3 +34,10 @@
 if rotary type, 32 for "-1", 64 for "+1"
 * Mixer coordinate \[1 Byte\]
 * Value \[1 Byte\]
+
+
+Mixer coordinate for the sliders (V and H types):
+The firt 4 bites represent the position on the slider
+0000 : up (for V) left (for H)
+0001 : down (for V) right (for H)
+The other 4 bites represent the slider position  
